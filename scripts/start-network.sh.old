@@ -1,0 +1,254 @@
+killall -9 fabric-ca-server
+killall -9 orderer
+sudo killall -9 peer
+
+cd ca-client
+./clean.sh
+
+echo "Please make sure couchdb docker process is running..."
+
+cd ../ca-server
+./server.sh start 2> ../logs/ca.log &
+
+sleep 3s
+
+# enroll admin identity
+# reqires fabric-ca-client-config.yaml in ca-client
+./server.sh enroll
+
+cd ../ca-client
+./register-enroll-admins-2org.sh
+
+. ./setup-org-msp.sh egov
+. ./setup-org-msp.sh orderer
+. ./setup-org-msp.sh finance
+
+# add some users to the egov org...mrichardson and rwest
+echo "================================================================================="
+echo "add user mrichardson"
+echo "================================================================================="
+. ./setclient.sh egov admin
+ATTRIBUTES='"hf.AffiliationMgr=false:ecert","hf.Revoker=false:ecert","app.accounting.role=manager:ecert","department=accounting:ecert"'
+fabric-ca-client register --id.type user --id.name mrichardson --id.secret pw --id.affiliation egov --id.attrs $ATTRIBUTES
+
+# enroll the user richardson...sets the directory to store the msp credentials
+. ./setclient.sh egov mrichardson
+fabric-ca-client enroll -u http://mrichardson:pw@localhost:7054
+
+./add-admincerts.sh egov mrichardson
+
+# check identity created successfully
+. ./setclient.sh egov admin
+
+echo "================================================================================="
+echo "add user mary"
+echo "================================================================================="
+. ./setclient.sh egov admin
+ATTRIBUTES='"hf.AffiliationMgr=false:ecert","hf.Revoker=false:ecert","app.accounting.role=manager:ecert","department=accounting:ecert"'
+fabric-ca-client register --id.type user --id.name mary --id.secret pw --id.affiliation egov --id.attrs $ATTRIBUTES
+
+# enroll the user mary...sets the directory to store the msp credentials
+. ./setclient.sh egov mary
+fabric-ca-client enroll -u http://mary:pw@localhost:7054
+
+./add-admincerts.sh egov mary
+
+# check identity created successfully
+. ./setclient.sh egov admin
+fabric-ca-client identity list
+
+
+echo "================================================================================="
+echo "add user john"
+echo "================================================================================="
+. ./setclient.sh egov admin
+ATTRIBUTES='"hf.AffiliationMgr=false:ecert","hf.Revoker=false:ecert","app.accounting.role=accountant:ecert","department=accounting:ecert"'
+fabric-ca-client register --id.type user --id.name john --id.secret pw --id.affiliation egov --id.attrs $ATTRIBUTES
+
+# enroll the user john...sets the directory to store the msp credentials
+. ./setclient.sh egov john
+fabric-ca-client enroll -u http://john:pw@localhost:7054
+
+./add-admincerts.sh egov john
+
+# check identity created successfully
+. ./setclient.sh egov admin
+fabric-ca-client identity list
+
+echo "================================================================================="
+echo "add user anil"
+echo "================================================================================="
+. ./setclient.sh egov admin
+ATTRIBUTES='"hf.AffiliationMgr=false:ecert","hf.Revoker=false:ecert","department=logistics:ecert","app.logistics.role=specialis:ecert"'
+fabric-ca-client register --id.type user --id.name anil --id.secret pw --id.affiliation egov --id.attrs $ATTRIBUTES
+
+# enroll the user anil...sets the directory to store the msp credentials
+. ./setclient.sh egov anil
+fabric-ca-client enroll -u http://anil:pw@localhost:7054
+
+./add-admincerts.sh egov anil
+
+# check identity created successfully
+. ./setclient.sh egov admin
+fabric-ca-client identity list
+
+cd ..
+
+echo "================================================================================="
+echo "generate genesis block"
+echo "================================================================================="
+./generate-genesis.sh 
+
+# ./register-enroll-orderer.shnote this command creates an orderer folder under ca-client/client/orderer
+./register-enroll-orderer.sh
+
+# generate the egov channel tx config file
+./generate-egov-channel-tx.sh
+
+# generate the finance channel tx config file
+./generate-finance-channel-tx.sh
+
+# sign the channel using the default org for the orderer (egov)
+cd peer1egov
+export FABRIC_CFG_PATH=$PWD
+export CORE_PEER_MSPCONFIGPATH=../ca-client/client/egov/admin/msp
+peer channel signconfigtx -f ../egov-channel.tx
+peer channel signconfigtx -f ../finance-channel.tx
+
+# start orderer
+cd ..
+export FABRIC_CFG_PATH=$PWD
+orderer 2> logs/orderer.log &
+
+echo "orderer starting..."
+sleep 3s
+
+# create egov channel
+cd peer1egov
+export FABRIC_CFG_PATH=$PWD
+export CORE_PEER_MSPCONFIGPATH=../ca-client/client/egov/admin/msp
+peer channel create -o localhost:7050 -c egovchannel -f ../egov-channel.tx
+
+# create finance channel
+peer channel create -o localhost:7050 -c financechannel -f ../finance-channel.tx
+
+./set-identity.sh egov admin
+./register-enroll-peer.sh egov peer1
+
+# start peer1 as ANCHOR
+export CORE_PEER_FILESYSTEMPATH="/home/mike/ledgers/multi-org-ca/egov/peer1/ledger" 
+export CORE_PEER_MSPCONFIGPATH=../ca-client/client/egov/peer1/msp
+sudo -E peer node start --peer-chaincodedev 2> ../logs/peer1.log &
+
+export FABRIC_CFG_PATH=$PWD
+export CORE_PEER_MSPCONFIGPATH=../ca-client/client/egov/admin/msp
+peer channel list
+
+sleep 2s
+
+# fetch and join egovchannel and financechannel
+peer channel fetch 0 ./egovchannel.block -o localhost:7050 -c egovchannel
+peer channel join -o localhost:7050 -b ./egovchannel.block
+
+peer channel fetch 0 ./financechannel.block -o localhost:7050 -c financechannel
+peer channel join -o localhost:7050 -b ./financechannel.block
+
+
+echo "================================================================================="
+echo "peer channel update - egov"
+echo "================================================================================="
+peer channel update -o localhost:7050 -c egovchannel -f ../egovAnchors.tx
+peer channel list
+
+sleep 2s
+
+# register peer3 for finance org
+cd ../peer3finance
+export FABRIC_CFG_PATH=$PWD
+. ./set-identity.sh finance admin
+./register-enroll-peer.sh finance peer3
+
+export CORE_PEER_FILESYSTEMPATH="/home/mike/ledgers/multi-org-ca/finance/peer3/ledger" 
+export CORE_PEER_MSPCONFIGPATH=../ca-client/client/finance/peer3/msp
+sudo -E peer node start --peer-chaincodedev 2> ../logs/peer3.log &
+
+# list channels for peer3 (should be none)
+export FABRIC_CFG_PATH=$PWD
+export CORE_PEER_MSPCONFIGPATH=../ca-client/client/finance/admin/msp
+echo "Channels for finance ORG (peer3)"
+peer channel list
+
+peer channel fetch 0 ./egovchannel.block -o localhost:7050 -c egovchannel
+peer channel join -o localhost:7050 -b ./egovchannel.block
+
+# fetch the 0th block file (financechannel.block is the output of this command)
+peer channel fetch 0 ./financechannel.block -o localhost:7050 -c financechannel
+peer channel join -o localhost:7050 -b ./financechannel.block
+
+
+echo "================================================================================="
+echo "peer channel update - finance"
+echo "================================================================================="
+peer channel update -o localhost:7050 -c egovchannel -f ../financeAnchors.tx
+
+
+echo "Channels for finance ORG (peer3)"
+peer channel list
+
+sleep 2s
+
+# Add ORG (gdt) to the network
+cd ../ca-client
+./register-enroll-admins-gdt.sh
+
+# copy msp from gdt/admin/msp to gdt/msp
+. ./setup-org-msp.sh gdt
+
+# set FABRIC_CFG_PATH to egov peer1
+cd ../peer1egov
+export FABRIC_CFG_PATH=$PWD
+
+# Update the channel tx with the new org MSP
+cd ../ADDORG-gdt
+# make sure configtx.yaml includes the new org and is in the config directory
+ 
+./fetch-config-json.sh egovchannel
+
+./add-member-org.sh
+
+./generate-config-update.sh egovchannel
+
+# Sign the channel update file as the egov, orderer and finance admin
+./sign-config-update-egov.sh egov admin
+./sign-config-update-orderer.sh orderer admin
+./sign-config-update-finance.sh finance admin
+
+./submit-config-update-tx.sh gdt admin egovchannel
+
+# verify that the block number of the channel has been incremented
+ ./fetch-config-json.sh egovchannel
+
+ # launch peer4 and join the egovchannel
+ cd ../peer4gdt
+export FABRIC_CFG_PATH=$PWD
+. ./set-identity.sh gdt admin
+./register-enroll-peer.sh gdt peer4
+
+# launch the gdt peer
+export CORE_PEER_FILESYSTEMPATH="/home/mike/ledgers/multi-org-ca/gdt/peer4/ledger" 
+export CORE_PEER_MSPCONFIGPATH=../ca-client/client/gdt/peer4/msp
+sudo -E peer node start --peer-chaincodedev 2> ../logs/peer4.log &
+
+export CORE_PEER_MSPCONFIGPATH=../ca-client/client/gdt/admin/msp
+
+cd ../peer4gdt
+export FABRIC_CFG_PATH=$PWD
+
+# fetch the 0th block file (egovchannel.block is the output of this command)
+peer channel fetch 0 ./egovchannel.block -o localhost:7050 -c egovchannel
+peer channel join -o localhost:7050 -b ./egovchannel.block
+
+peer channel list
+
+echo "Fabric network started ok!"
+
