@@ -7,7 +7,7 @@ export FABRIC_CFG_PATH=$PWD
 echo    '================ Writing Genesis Block ================'
 configtxgen -profile designerOrdererGenesis -outputBlock ./channel-artifacts/dablock-genesis.block -channelID ordererchannel
 
-
+# Anchor Peers
 echo '================ Generate the anchor Peer updates ==============================='
 configtxgen -outputAnchorPeersUpdate ./channel-artifacts/designerAnchors.tx -profile dablockChannel -asOrg designer -channelID dablockchannel
 configtxgen -outputAnchorPeersUpdate ./channel-artifacts/customerAnchors.tx -profile dablockChannel -asOrg customer -channelID dablockchannel
