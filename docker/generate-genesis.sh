@@ -9,6 +9,15 @@ configtxgen -profile designerOrdererGenesis -outputBlock ./channel-artifacts/dab
 
 # Anchor Peers
 echo '================ Generate the anchor Peer updates ==============================='
+
+echo "================================================================================="
+echo "                 Generate Anchor Peer Update for designerMSP"
+echo "================================================================================="
 configtxgen -outputAnchorPeersUpdate ./channel-artifacts/designerAnchors.tx -profile dablockChannel -asOrg designer -channelID dablockchannel
+
+
+echo "================================================================================="
+echo "                 Generate Anchor Peer Update for customerMSP"
+echo "================================================================================="
 configtxgen -outputAnchorPeersUpdate ./channel-artifacts/customerAnchors.tx -profile dablockChannel -asOrg customer -channelID dablockchannel
 echo "================================================================================="
