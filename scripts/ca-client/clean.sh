@@ -11,6 +11,7 @@ rm -rf client/customer/peer*
 rm -rf client/orderer/admin
 rm -rf client/orderer/msp
 rm -rf client/orderer/orderer/msp
+rm -rf crypto-config
 
 rm -rf ../ca-server/msp
 rm -rf ../ca-server/*.pem

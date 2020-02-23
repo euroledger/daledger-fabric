@@ -6,3 +6,4 @@ client
 *.tx
 *.block
 *.db
+crypto-config
