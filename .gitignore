@@ -7,3 +7,8 @@ client
 *.block
 *.db
 crypto-config
+channel-artifacts
+docker-copy
+docker/
+docker-old
+node-modules

@@ -244,7 +244,7 @@ Profiles:
                  - <<: *designer  
                  - <<: *customer                            
                 
-  dablockchannel:
+  dablockChannel:
    <<: *ChannelDefaults
    Consortium: designerConsortium
       

@@ -1,0 +1,60 @@
+{
+    "name": "dablock-designer",
+    "version": "1.0.0",
+    "client": {
+        "organization": "designer",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300"
+                }
+            }
+        }
+    },
+    "organizations": {
+        "designer": {
+            "mspid": "designerMSP",
+            "peers": [
+                "peer0.designer.dablock.com",
+                "peer1.designer.dablock.com"
+            ],
+            "certificateAuthorities": [
+                "ca.designer.dablock.com"
+            ]
+        }
+    },
+    "peers": {
+        "peer0.{ORG}.dablock.com": {
+            "url": "grpcs://localhost:7051",
+            "tlsCACerts": {
+                "pem": "-----BEGIN CERTIFICATE-----\nMIICZjCCAg2gAwIBAgIQVIY2GNGzvlkNw0w1EwfFWTAKBggqhkjOPQQDAjB+MQsw\nCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FuIEZy\nYW5jaXNjbzEdMBsGA1UEChMUZGVzaWduZXIuZGFibG9jay5jb20xIzAhBgNVBAMT\nGnRsc2NhLmRlc2lnbmVyLmRhYmxvY2suY29tMB4XDTIwMDIyNjEwNDkwMFoXDTMw\nMDIyMzEwNDkwMFowfjELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWEx\nFjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xHTAbBgNVBAoTFGRlc2lnbmVyLmRhYmxv\nY2suY29tMSMwIQYDVQQDExp0bHNjYS5kZXNpZ25lci5kYWJsb2NrLmNvbTBZMBMG\nByqGSM49AgEGCCqGSM49AwEHA0IABLprJnY7swYZvSJR5JZUCk/McDzC9Ah3S1Hr\n/Ivc/esfNFMTtclaJR/eLWIpnHx9aZa3hCojxt7vJlDnxbscG+2jbTBrMA4GA1Ud\nDwEB/wQEAwIBpjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDwYDVR0T\nAQH/BAUwAwEB/zApBgNVHQ4EIgQgNHWGkJMBBjl5WqXDoZoqy6J81Hr8f5hlVoT1\nBFphcKYwCgYIKoZIzj0EAwIDRwAwRAIgNp+uhT6IJIGiAsqk0bly0ZqTiyyh8hHO\nTaAIO/n3Hc4CIE04VXIUFeK5zBUEAmDkdAeTMYs9/3Lexqri6RgkOrT9\n-----END CERTIFICATE-----\n"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.designer.dablock.com",
+                "hostnameOverride": "peer0.designer.dablock.com"
+            }
+        },
+        "peer1.designer.dablock.com": {
+            "url": "grpcs://localhost:8051",
+            "tlsCACerts": {
+                "pem": "-----BEGIN CERTIFICATE-----\nMIICZjCCAg2gAwIBAgIQVIY2GNGzvlkNw0w1EwfFWTAKBggqhkjOPQQDAjB+MQsw\nCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FuIEZy\nYW5jaXNjbzEdMBsGA1UEChMUZGVzaWduZXIuZGFibG9jay5jb20xIzAhBgNVBAMT\nGnRsc2NhLmRlc2lnbmVyLmRhYmxvY2suY29tMB4XDTIwMDIyNjEwNDkwMFoXDTMw\nMDIyMzEwNDkwMFowfjELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWEx\nFjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xHTAbBgNVBAoTFGRlc2lnbmVyLmRhYmxv\nY2suY29tMSMwIQYDVQQDExp0bHNjYS5kZXNpZ25lci5kYWJsb2NrLmNvbTBZMBMG\nByqGSM49AgEGCCqGSM49AwEHA0IABLprJnY7swYZvSJR5JZUCk/McDzC9Ah3S1Hr\n/Ivc/esfNFMTtclaJR/eLWIpnHx9aZa3hCojxt7vJlDnxbscG+2jbTBrMA4GA1Ud\nDwEB/wQEAwIBpjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDwYDVR0T\nAQH/BAUwAwEB/zApBgNVHQ4EIgQgNHWGkJMBBjl5WqXDoZoqy6J81Hr8f5hlVoT1\nBFphcKYwCgYIKoZIzj0EAwIDRwAwRAIgNp+uhT6IJIGiAsqk0bly0ZqTiyyh8hHO\nTaAIO/n3Hc4CIE04VXIUFeK5zBUEAmDkdAeTMYs9/3Lexqri6RgkOrT9\n-----END CERTIFICATE-----\n"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer1.designer.dablock.com",
+                "hostnameOverride": "peer1.designer.dablock.com"
+            }
+        }
+    },
+    "certificateAuthorities": {
+        "ca.designer.dablock.com": {
+            "url": "https://localhost:7054",
+            "caName": "ca-designer",
+            "tlsCACerts": {
+                "pem": "-----BEGIN CERTIFICATE-----\nMIICYjCCAgigAwIBAgIRAL9Q21XR9zmzz/Qte29KBN4wCgYIKoZIzj0EAwIwezEL\nMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAUBgNVBAcTDVNhbiBG\ncmFuY2lzY28xHTAbBgNVBAoTFGRlc2lnbmVyLmRhYmxvY2suY29tMSAwHgYDVQQD\nExdjYS5kZXNpZ25lci5kYWJsb2NrLmNvbTAeFw0yMDAyMjYxMDQ5MDBaFw0zMDAy\nMjMxMDQ5MDBaMHsxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRYw\nFAYDVQQHEw1TYW4gRnJhbmNpc2NvMR0wGwYDVQQKExRkZXNpZ25lci5kYWJsb2Nr\nLmNvbTEgMB4GA1UEAxMXY2EuZGVzaWduZXIuZGFibG9jay5jb20wWTATBgcqhkjO\nPQIBBggqhkjOPQMBBwNCAAROutSW94sk3Nv/91vlhy+Wmw7NIIC3VhmljnZ06zjq\nolOoWpCG5O3S48Est5/OmIrvZ35pcAe5Ln0jdfVDOk85o20wazAOBgNVHQ8BAf8E\nBAMCAaYwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMA8GA1UdEwEB/wQF\nMAMBAf8wKQYDVR0OBCIEIGmx94Fd0F3l90ExOjwLcW8uD1YKrGtyCP+VJEt4BtY6\nMAoGCCqGSM49BAMCA0gAMEUCIQDykhIDIvnm69d+WlEGh4GyspNZoa4KCjg7uDGF\nMx10bAIgVtorlyQ7oHHTbv01uvX0nH2a9pPV+eZjQw+v4r80K6k=\n-----END CERTIFICATE-----\n"
+            },
+            "httpOptions": {
+                "verify": false
+            }
+        }
+    }
+}

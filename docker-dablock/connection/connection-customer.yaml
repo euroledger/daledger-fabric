@@ -1,0 +1,88 @@
+---
+name: dablock-customer
+version: 1.0.0
+client:
+    organization: customer
+    connection:
+        timeout:
+            peer:
+                endorser: '300'
+organizations:
+    customer:
+        mspid: customerMSP
+        peers:
+            - peer0.customer.dablock.com
+            - peer1.customer.dablock.com
+        certificateAuthorities:
+            - ca.customer.dablock.com
+peers:
+    peer0.customer.dablock.com:
+        url: grpcs://localhost:9051
+        tlsCACerts:
+            pem: |
+                -----BEGIN CERTIFICATE-----
+        MIICZjCCAg2gAwIBAgIQDsHyGb6xJJogbVIsqGJhwTAKBggqhkjOPQQDAjB+MQsw
+        CQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FuIEZy
+        YW5jaXNjbzEdMBsGA1UEChMUY3VzdG9tZXIuZGFibG9jay5jb20xIzAhBgNVBAMT
+        GnRsc2NhLmN1c3RvbWVyLmRhYmxvY2suY29tMB4XDTIwMDIyNjEwNDkwMFoXDTMw
+        MDIyMzEwNDkwMFowfjELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWEx
+        FjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xHTAbBgNVBAoTFGN1c3RvbWVyLmRhYmxv
+        Y2suY29tMSMwIQYDVQQDExp0bHNjYS5jdXN0b21lci5kYWJsb2NrLmNvbTBZMBMG
+        ByqGSM49AgEGCCqGSM49AwEHA0IABM0C5+kh4HiPSViWkUVhPEkDdhi1hKh2EpES
+        L15SFOo2mDT465UHWku2BpogMDbIMdql0hx2odnJeAsrNkG/3z2jbTBrMA4GA1Ud
+        DwEB/wQEAwIBpjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDwYDVR0T
+        AQH/BAUwAwEB/zApBgNVHQ4EIgQgQukrHlISOZ36PfUBcuKKGaTZeVx+UTCARamX
+        YTIWrBkwCgYIKoZIzj0EAwIDRwAwRAIgZhiuprivzZg5vIrlZHqUKyv5neKgIAkG
+        SfmRgJacPogCIFnsBSsbainvvN+7BbLvJpY0v+6BcNkTBip9fdZI0Yt8
+        -----END CERTIFICATE-----
+        
+        grpcOptions:
+            ssl-target-name-override: peer0.customer.dablock.com
+            hostnameOverride: peer0.customer.dablock.com
+    peer1.customer.dablock.com:
+        url: grpcs://localhost:10051
+        tlsCACerts:
+            pem: |
+                -----BEGIN CERTIFICATE-----
+        MIICZjCCAg2gAwIBAgIQDsHyGb6xJJogbVIsqGJhwTAKBggqhkjOPQQDAjB+MQsw
+        CQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FuIEZy
+        YW5jaXNjbzEdMBsGA1UEChMUY3VzdG9tZXIuZGFibG9jay5jb20xIzAhBgNVBAMT
+        GnRsc2NhLmN1c3RvbWVyLmRhYmxvY2suY29tMB4XDTIwMDIyNjEwNDkwMFoXDTMw
+        MDIyMzEwNDkwMFowfjELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWEx
+        FjAUBgNVBAcTDVNhbiBGcmFuY2lzY28xHTAbBgNVBAoTFGN1c3RvbWVyLmRhYmxv
+        Y2suY29tMSMwIQYDVQQDExp0bHNjYS5jdXN0b21lci5kYWJsb2NrLmNvbTBZMBMG
+        ByqGSM49AgEGCCqGSM49AwEHA0IABM0C5+kh4HiPSViWkUVhPEkDdhi1hKh2EpES
+        L15SFOo2mDT465UHWku2BpogMDbIMdql0hx2odnJeAsrNkG/3z2jbTBrMA4GA1Ud
+        DwEB/wQEAwIBpjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDwYDVR0T
+        AQH/BAUwAwEB/zApBgNVHQ4EIgQgQukrHlISOZ36PfUBcuKKGaTZeVx+UTCARamX
+        YTIWrBkwCgYIKoZIzj0EAwIDRwAwRAIgZhiuprivzZg5vIrlZHqUKyv5neKgIAkG
+        SfmRgJacPogCIFnsBSsbainvvN+7BbLvJpY0v+6BcNkTBip9fdZI0Yt8
+        -----END CERTIFICATE-----
+        
+        grpcOptions:
+            ssl-target-name-override: peer1.customer.dablock.com
+            hostnameOverride: peer1.customer.dablock.com
+certificateAuthorities:
+    ca.customer.dablock.com:
+        url: https://localhost:8054
+        caName: ca-customer
+        tlsCACerts:
+            pem: |
+                -----BEGIN CERTIFICATE-----
+        MIICYDCCAgegAwIBAgIQarRNQ7PrIt1jBwlfqj35vTAKBggqhkjOPQQDAjB7MQsw
+        CQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEWMBQGA1UEBxMNU2FuIEZy
+        YW5jaXNjbzEdMBsGA1UEChMUY3VzdG9tZXIuZGFibG9jay5jb20xIDAeBgNVBAMT
+        F2NhLmN1c3RvbWVyLmRhYmxvY2suY29tMB4XDTIwMDIyNjEwNDkwMFoXDTMwMDIy
+        MzEwNDkwMFowezELMAkGA1UEBhMCVVMxEzARBgNVBAgTCkNhbGlmb3JuaWExFjAU
+        BgNVBAcTDVNhbiBGcmFuY2lzY28xHTAbBgNVBAoTFGN1c3RvbWVyLmRhYmxvY2su
+        Y29tMSAwHgYDVQQDExdjYS5jdXN0b21lci5kYWJsb2NrLmNvbTBZMBMGByqGSM49
+        AgEGCCqGSM49AwEHA0IABLxRsD84yreB3fkVPivjnyRP6EQvFz6qpqRDOKN8TQ/k
+        M1MJwmKNhk0OUFlg1SuoSnQB+lJTVwYSMYu3VCFgCyijbTBrMA4GA1UdDwEB/wQE
+        AwIBpjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwDwYDVR0TAQH/BAUw
+        AwEB/zApBgNVHQ4EIgQgK+g44a6GuIB9NxeC5i20tErtWLOB6DSufQ+TpEAMJkww
+        CgYIKoZIzj0EAwIDRwAwRAIgPFoxLCEURq8IkQHZqfYSE9QpXcO/5LfhRO9YD5KH
+        45MCIDnGsabM5jDOw8vsiTJ8ngs6XEEKjtNlZG2b99sxJ0tP
+        -----END CERTIFICATE-----
+        
+        httpOptions:
+            verify: false

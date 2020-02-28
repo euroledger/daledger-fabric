@@ -1,0 +1,110 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+services:
+
+  orderer.dablock.com:
+    container_name: orderer.dablock.com
+    extends:
+      file: peer-base.yaml
+      service: orderer-base
+    volumes:
+        - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+        - ../crypto-config/ordererOrganizations/dablock.com/orderers/orderer.dablock.com/msp:/var/hyperledger/orderer/msp
+        - ../crypto-config/ordererOrganizations/dablock.com/orderers/orderer.dablock.com/tls/:/var/hyperledger/orderer/tls
+        - orderer.dablock.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  peer0.designer.dablock.com:
+    container_name: peer0.designer.dablock.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.designer.dablock.com
+      - CORE_PEER_ADDRESS=peer0.designer.dablock.com:7051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.designer.dablock.com:7052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7052
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.designer.dablock.com:8051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.designer.dablock.com:7051
+      - CORE_PEER_LOCALMSPID=designerMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/designer.dablock.com/peers/peer0.designer.dablock.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/designer.dablock.com/peers/peer0.designer.dablock.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.designer.dablock.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+
+  peer1.designer.dablock.com:
+    container_name: peer1.designer.dablock.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.designer.dablock.com
+      - CORE_PEER_ADDRESS=peer1.designer.dablock.com:8051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.designer.dablock.com:8052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:8052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.designer.dablock.com:8051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.designer.dablock.com:7051
+      - CORE_PEER_LOCALMSPID=designerMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/designer.dablock.com/peers/peer1.designer.dablock.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/designer.dablock.com/peers/peer1.designer.dablock.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.designer.dablock.com:/var/hyperledger/production
+
+    ports:
+      - 8051:8051
+
+  peer0.customer.dablock.com:
+    container_name: peer0.customer.dablock.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.customer.dablock.com
+      - CORE_PEER_ADDRESS=peer0.customer.dablock.com:9051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:9051
+      - CORE_PEER_CHAINCODEADDRESS=peer0.customer.dablock.com:9052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:9052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.customer.dablock.com:9051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.customer.dablock.com:10051
+      - CORE_PEER_LOCALMSPID=customerMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/customer.dablock.com/peers/peer0.customer.dablock.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/customer.dablock.com/peers/peer0.customer.dablock.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.customer.dablock.com:/var/hyperledger/production
+    ports:
+      - 9051:9051
+
+  peer1.customer.dablock.com:
+    container_name: peer1.customer.dablock.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.customer.dablock.com
+      - CORE_PEER_ADDRESS=peer1.customer.dablock.com:10051
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:10051
+      - CORE_PEER_CHAINCODEADDRESS=peer1.customer.dablock.com:10052
+      - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:10052
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.customer.dablock.com:10051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.customer.dablock.com:9051
+      - CORE_PEER_LOCALMSPID=customerMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/customer.dablock.com/peers/peer1.customer.dablock.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/customer.dablock.com/peers/peer1.customer.dablock.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.customer.dablock.com:/var/hyperledger/production
+    ports:
+      - 10051:10051

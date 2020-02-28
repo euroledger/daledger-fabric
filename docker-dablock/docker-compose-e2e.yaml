@@ -1,0 +1,90 @@
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '2'
+
+volumes:
+  orderer.dablock.com:
+  peer0.designer.dablock.com:
+  peer1.designer.dablock.com:
+  peer0.customer.dablock.com:
+  peer1.customer.dablock.com:
+
+networks:
+  dablock:
+services:
+  ca-designer:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-designer
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.designer.dablock.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/${CA_DESIGNER_PRIVATE_KEY}
+    ports:
+      - "7054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.designer.dablock.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/${CA_DESIGNER_PRIVATE_KEY} -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/designer.dablock.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerdesigner
+    networks:
+      - dablock
+
+  ca-customer:
+    image: hyperledger/fabric-ca:$IMAGE_TAG
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-customer
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.customer.dablock.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/${CA_CUSTOMER_PRIVATE_KEY}
+    ports:
+      - "8054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.customer.dablock.com-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/${CA_CUSTOMER_PRIVATE_KEY} -b admin:adminpw -d'
+    volumes:
+      - ./crypto-config/peerOrganizations/customer.dablock.com/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peercustomer
+    networks:
+      - dablock
+
+  orderer.dablock.com:
+    extends:
+      file:   base/docker-compose-base.yaml
+      service: orderer.dablock.com
+    container_name: orderer.dablock.com
+    networks:
+      - dablock
+
+  peer0.designer.dablock.com:
+    container_name: peer0.designer.dablock.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.designer.dablock.com
+    networks:
+      - dablock
+
+  peer1.designer.dablock.com:
+    container_name: peer1.designer.dablock.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.designer.dablock.com
+    networks:
+      - dablock
+
+  peer0.customer.dablock.com:
+    container_name: peer0.customer.dablock.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer0.customer.dablock.com
+    networks:
+      - dablock
+
+  peer1.customer.dablock.com:
+    container_name: peer1.customer.dablock.com
+    extends:
+      file:  base/docker-compose-base.yaml
+      service: peer1.customer.dablock.com
+    networks:
+      - dablock
