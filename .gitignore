@@ -11,4 +11,4 @@ channel-artifacts
 docker-copy
 docker/
 docker-old
-node-modules
+node_modules
